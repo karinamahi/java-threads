@@ -174,3 +174,75 @@ Thread 2 is running. Counter: 8
 The JVM doesn’t guarantee that `Thread 1` will execute before `Thread 2`, `Thread 3`, etc. Threads start asynchronously, but synchronized forces them to execute one at a time.
 
 So, the first thread to acquire the lock runs first, then the next, and so on. That’s why the `counter` increments correctly (1 to 8), but the thread names appear in a seemingly random order.
+
+## Thread Dependency
+
+Let's imagine a scenario where `Thread A` starts only after `Thread B` finishes its execution.
+
+The following example simulates a **data processing** task that waits for the **data loading** to complete.
+```java
+public class DataLoader implements Runnable {
+
+    @Override
+    public void run() {
+        System.out.println("Loading data...");
+        try {
+            Thread.sleep(2000); // simulating data loading
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Data loading completed.");
+    }
+}
+```
+
+Simply calling the start method in the desired sequence does not guarantee that the `dataProcessor` will wait for the data loading.
+```java
+public class ThreadDependencyExample {
+    
+    public static void main(String[] args) {
+        Thread dataLoaderThread = new Thread(new DataLoader());
+
+        Thread dataProcessorThread = new Thread(() -> {
+            System.out.println("Processing data after loading is complete.");
+        });
+
+        dataLoaderThread.start(); 
+        dataProcessorThread.start(); 
+    }
+}
+```
+
+As we can see in the output, the `dataProcessor` didn't wait for `dataLoader` to finish its execution.
+```text
+Loading data...
+Processing data after loading is complete.
+Data loading completed.
+```
+
+A great way to make the `dataProcessor` wait for `dataLoader` is to use the method `join()`
+```java
+public class ThreadDependencyExample {
+    public static void main(String[] args) {
+        Thread dataLoaderThread = new Thread(new DataLoader());
+
+        Thread dataProcessorThread = new Thread(() -> {
+            try {
+                dataLoaderThread.join(); // waits for dataLoader to complete
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Processing data after loading is complete.");
+        });
+
+        dataLoaderThread.start();  // start data loading first
+        dataProcessorThread.start(); // start data processing (but it waits)
+    }
+}
+```
+Then, we have:
+```text
+Loading data...
+Data loading completed.
+Processing data after loading is complete.
+```
