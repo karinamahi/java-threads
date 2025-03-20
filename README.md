@@ -478,6 +478,6 @@ public class NormalThreadScalingPool {
 ```
 Looking at the output, we can see a significant difference, and we can conclude that virtual threads are much more scalable for handling a high number of concurrent tasks.
 ```text
-Virtual Threads execution time: 1192 ms.
-Thread Pool execution time: 251157 ms.
+Virtual Threads execution time: 1192 ms.      # 1,192 seconds
+Thread Pool execution time: 251157 ms.        # 4,18595 minutes
 ```
