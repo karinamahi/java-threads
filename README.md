@@ -398,7 +398,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: unable to create native t
 
 Process finished with exit code 1
 ```
-Creating 1,000,000 platform threads (newThreadPerTaskExecutor) is extremely expensive
+Creating 1,000,000 platform threads (newThreadPerTaskExecutor) is extremely expensive.
 
 To avoid the system crash without using the virtual threads, we need to use a fixed pool of threads.
 ```java
@@ -425,7 +425,7 @@ public class NormalThreadScalingPool {
 ```
 However, the thread pool can take considerable longer time to execute than the virtual threads. So, let's compare the execution time.
 
-First, I reduced the loop iterations from 1 million to 1 hundred. Then, I added the time calculation. 
+First, I reduced the loop iterations from 1 million to 1,000. Then, I added a time measurement. 
 
 ```java
 public class VirtualThreadsScaling {
