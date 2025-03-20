@@ -246,3 +246,55 @@ Loading data...
 Data loading completed.
 Processing data after loading is complete.
 ```
+
+## Daemon Threads
+
+Daemon threads are special types of threads that run in the background and are automatically terminated when all non-daemon (normal) threads finish execution.
+
+If all normal thread finish, all daemon threads are stopped automatically, even if they haven't finished their work.
+
+Let's create a task and set the thread as a daemon thread.
+
+```java
+public class DaemonTask implements Runnable {
+
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println("Daemon thread running...");
+            try {
+                Thread.sleep(1000); // simulating background work
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+public class DaemonExample {
+    public static void main(String[] args) {
+        Thread daemonThread = new Thread(new DaemonTask());
+        daemonThread.setDaemon(true); // mark this thread as a daemon
+
+        daemonThread.start();
+
+        try {
+            Thread.sleep(3000); // main thread runs for 3 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Main thread finished. Daemon thread will stop automatically.");
+    }
+}
+```
+Output:
+
+```text
+Daemon thread running...
+Daemon thread running...
+Daemon thread running...
+Main thread finished. Daemon thread will stop automatically.
+```
+
+The daemon thread is forcefully stopped once the main thread finishes, so we should not use a daemon thread if it must complete its task.
